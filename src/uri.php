@@ -28,25 +28,4 @@ class URI
         $real_path = trim(strtolower(realpath('.')), "/");
         return explode(DIRECTORY_SEPARATOR, $real_path);
     }
-
-    public static function getMethod()
-    {
-        if (isset(self::parsUri()[1]))
-        {
-            return self::parsUri()[1];
-        }
-
-        return false;
-    }
-
-    public static function getController()
-    {
-        if (isset(self::parsUri()[0]))
-        {
-            return self::parsUri()[0];
-        }
-
-        return false;
-    }
-
 }

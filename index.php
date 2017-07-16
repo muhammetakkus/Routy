@@ -7,23 +7,35 @@
  */
 
 
+/* uri klasör ismini döndürmemeli */
+
+use Routy\Routy;
+
 require_once "vendor/autoload.php";
 
 
-//\Routy\Routy::get("/", "Home@Index");
-\Routy\Routy::get("/test/{id}", function ($id){
-    echo $id;
+echo basename($_SERVER['REQUEST_URI']).PHP_EOL;
+
+
+/* çalışmıyor?
+Routy::get("/test/{user}", function ($user){
+    echo $user;
 });
-var_dump(\Routy\Routy::get("/user/profile/{a}", "Home@Index"));
+ */
 
-/*
-Routy::get("/test-page",function (){
-    echo "test page";
-});
+Routy::get("/user/", "Test@Index");
 
-Routy::get("user/profile/{id}", "UserController@profile");
 
-Routy::post("user/profile", "UserController@profile");*/
+/* bu şekilde routerların olması çakışır
+    yani 3 kısımlı bir routerdan -ilk 2 kısmının aynı oaln ve de parametre alan gibi benzeri varsa
+    getSaltUri() fonksiyonu  */
+//Routy::get("/user/profile/x", "Test@Index");
+//Routy::get("/user/profil/{id}", "Home@Index");
+
+/* var olan core.php deki match kontrolü yapılacak */
+/* REQUEST kontrolü yapılacak get te istek get mi gibi */
+/* dökümantasyonu yazılacak */
+/* oop durumu incelenecek */
 
 /**
  * route test-oop[PATTERNS]-module-github-packagist.org
@@ -33,38 +45,3 @@ Routy::post("user/profile", "UserController@profile");*/
 //token method
 //calling metod
 //redirect metod
-
-
-/*$url = parse_url($_SERVER['REQUEST_URI']);
-echo $_SERVER['SERVER_NAME'];
-
-public static function ajax()
-{
-    return isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-}
-public static function uri()
-{
-    $url = parse_url($_SERVER['REQUEST_URI']);
-    return $url['path'];
-}
-public static function method()
-{
-    return $_SERVER['REQUEST_METHOD'];
-}
-public static function domain()
-{
-    return $_SERVER['SERVER_NAME'];
-}
-public static function segment($index)
-{
-    $segments = self::segments();
-    if (isset($segments[$index - 1])) {
-        return $segments[$index - 1];
-    } else {
-        return null;
-    }
-}
-public static function segments()
-{
-    return explode('/', trim(Request::uri(), '/'));
-}*/
