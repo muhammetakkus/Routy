@@ -10,13 +10,14 @@
 /* uri klasör ismini döndürmemeli */
 
 use Routy\Routy;
+use Routy\Server;
 
 require_once "vendor/autoload.php";
 
 
-echo basename($_SERVER['REQUEST_URI']).PHP_EOL;
+//echo basename($_SERVER['REQUEST_URI']).PHP_EOL;
 
-
+echo "-".Server::uri()."-";
 /*Routy::get("/test/{user}", function ($user){
     echo $user;
 });*/
