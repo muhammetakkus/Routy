@@ -15,17 +15,19 @@ require_once "vendor/autoload.php";
 
 
 echo basename($_SERVER['REQUEST_URI']).PHP_EOL;
-echo "</br>";
-echo "tt";
 
-/* çalışmıyor?
-Routy::get("/test/{user}", function ($user){
+
+/*Routy::get("/test/{user}", function ($user){
     echo $user;
-});
- */
+});*/
 
+Routy::get("/", function (){
+   echo "home page--";
+});
 Routy::get("/user/", "Test@Index");
 
+//sorun hiçbir uri yok iken server::uri() yani server[request_uri] klasör ismini veriyor
+//klasör ismini değilde boş verse (route === / && server::uri === "") diyebiliriz
 
 /* bu şekilde routerların olması çakışır
     yani 3 kısımlı bir routerdan -ilk 2 kısmının aynı oaln ve de parametre alan gibi benzeri varsa

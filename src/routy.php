@@ -50,11 +50,12 @@ class Routy
                 ..
             ]
         */
+        var_dump(self::$_route);
         //Core::getSaltUri(self::$_route);
         if(Core::getSaltUri(self::$_route) == true)
         {
             self::$_routes[self::$_route] = $data;
-
+            Core::calling(self::$_routes, self::$_route);
         }
         else {
             //router ile match olmayan uri requesti

@@ -75,7 +75,7 @@ class Core
 
     public static function getSaltUri($route)
     {
-        if ($route === "/" && Server::uri() === "/")
+        if ($route === "/" && Server::uri() === "")
         {
             return true;
         }
