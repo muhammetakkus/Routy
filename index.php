@@ -15,7 +15,8 @@ require_once "vendor/autoload.php";
 
 
 echo basename($_SERVER['REQUEST_URI']).PHP_EOL;
-
+echo "</br>";
+echo "tt";
 
 /* çalışmıyor?
 Routy::get("/test/{user}", function ($user){
