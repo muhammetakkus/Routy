@@ -50,7 +50,7 @@ class Routy
                 ..
             ]
         */
-        var_dump(self::$_route);
+
         //Core::getSaltUri(self::$_route);
         if(Core::getSaltUri(self::$_route) == true)
         {
