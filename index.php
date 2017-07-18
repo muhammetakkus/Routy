@@ -18,6 +18,7 @@ require_once "vendor/autoload.php";
 //echo basename($_SERVER['REQUEST_URI']).PHP_EOL;
 
 echo "-".Server::uri()."-";
+echo "</br>";
 /*Routy::get("/test/{user}", function ($user){
     echo $user;
 });*/
