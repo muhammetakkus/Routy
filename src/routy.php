@@ -59,6 +59,7 @@ class Routy
         }
         else {
             //router ile match olmayan uri requesti
+            echo "<pre>route ile eşleşmeyen uri</pre>";
         }
     }
 
