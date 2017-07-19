@@ -54,7 +54,6 @@ class Routy
                 ..
             ]
         */
-        var_dump(self::$_route);
         if(Core::getSaltUri(self::$_route) == true)
         {
             self::$_routes[self::$_route] = $data;
