@@ -9,27 +9,32 @@
 
 /* uri klasör ismini döndürmemeli */
 
+
 use Routy\Routy;
 use Routy\Server;
 
 require_once "vendor/autoload.php";
 
 
-//echo basename($_SERVER['REQUEST_URI']).PHP_EOL;
 
-echo "-".Server::uri()."-";
-echo "</br>";
-/*Routy::get("/test/{user}", function ($user){
+echo "-".Server::uri()."-</br>";
+Routy::get("/test/{user}", function ($user){
     echo $user;
-});*/
+});
 
 Routy::get("/", function (){
    echo "home page--";
 });
 Routy::get("/user/", "Test@Index");
 
-//sorun hiçbir uri yok iken server::uri() yani server[request_uri] klasör ismini veriyor
-//klasör ismini değilde boş verse (route === / && server::uri === "") diyebiliriz
+//parametrede sıkıntı var bak..
+Routy::get("profile/{id}", "Home@Index");
+
+Routy::check();
+
+//eğer app dosyaları bir klasör içerisindeyse ana dizinde o klasör ismi request_uri olarak alınıyor
+//localhost'da mecvuren bir klasör içerisinde
+//o zaman şu olacak eğer bir klasör içerisindeyse o klasör ismi config dosyasında belirtilmeli
 
 /* bu şekilde routerların olması çakışır
     yani 3 kısımlı bir routerdan -ilk 2 kısmının aynı oaln ve de parametre alan gibi benzeri varsa
@@ -37,10 +42,10 @@ Routy::get("/user/", "Test@Index");
 //Routy::get("/user/profile/x", "Test@Index");
 //Routy::get("/user/profil/{id}", "Home@Index");
 
-/* var olan core.php deki match kontrolü yapılacak */
-/* REQUEST kontrolü yapılacak get te istek get mi gibi */
+
 /* dökümantasyonu yazılacak */
 /* oop durumu incelenecek */
+/* testleri yaz */
 
 /**
  * route test-oop[PATTERNS]-module-github-packagist.org

@@ -1,8 +1,8 @@
 <?php
 class Home
 {
-    function Index()
+    function Index($id)
     {
-        echo "sucess!!";
+        echo "id: ".$id;
     }
 }

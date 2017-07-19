@@ -7,6 +7,7 @@ class Core
     private static $urim;
     private static $router;
     private static $currentRouter;
+
     public static function callback($call)
     {
         if (is_callable($call))
@@ -29,8 +30,6 @@ class Core
     {
         if (preg_match('/(.*)\{(.*)\}/', $route, $match))
         {
-            //$match
-
             /* gelen route'daki parametrelerden ayıklanmış kısmı al-match[1]- ve trimle */
             self::$router = trim($match[1],"/");
             //(self::$router == "") ? self::$router = "/" : self::$router;

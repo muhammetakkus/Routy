@@ -11,6 +11,7 @@ class Server
 
     public static function uri()
     {
+        //basename($_SERVER['REQUEST_URI']).PHP_EOL;
         return trim($_SERVER["REQUEST_URI"], "/");
     }
 

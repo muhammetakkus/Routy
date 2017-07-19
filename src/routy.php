@@ -4,14 +4,18 @@ namespace Routy;
 
 class Routy
 {
-    private static $_routes;
     private static $_route;
+    private static $_routes;
     private static $_controller;
     private static $_method;
     private static $_param;
     private static $_callback;
+    private static $status = false;
 
-    /** GET **/
+    /**
+     * @param $route static
+     * @param $call static|closure
+     */
     public static function get($route, $call)
     {
         /* is there closure function ? */
@@ -50,16 +54,16 @@ class Routy
                 ..
             ]
         */
-
-        //Core::getSaltUri(self::$_route);
+        var_dump(self::$_route);
         if(Core::getSaltUri(self::$_route) == true)
         {
             self::$_routes[self::$_route] = $data;
             Core::calling(self::$_routes, self::$_route);
+            self::$status = true;
         }
-        else {
-            //router ile match olmayan uri requesti
-            echo "<pre>route ile eşleşmeyen uri</pre>";
+        else
+        {
+            return false;
         }
     }
 
@@ -95,6 +99,18 @@ class Routy
         self::$_routes[self::$_route] = $data;
 
         return self::$_routes;
+    }
+
+    /**
+     * check correct uri
+     */
+    public static function check()
+    {
+        if (self::$status === false)
+        {
+            //redirect home or 404
+            echo "hiç olmayan router";
+        }
     }
 
 }
