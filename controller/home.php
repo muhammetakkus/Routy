@@ -1,8 +1,12 @@
 <?php
 class Home
 {
-    function Index($id)
+    //gönderilmeyen parametreler için hata almak istemiyorsan default değer ver
+    function Index($id = "")
     {
-        echo "id: ".$id;
+        if (empty($id))
+            echo "Home@Index argüman kanalından id bekliyor";
+        else
+            echo "id: ".$id;
     }
 }

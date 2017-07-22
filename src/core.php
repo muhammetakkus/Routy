@@ -4,10 +4,10 @@ namespace Routy;
 
 class Core
 {
-    private static $urim;
-    private static $router;
-    private static $currentRouter;
-
+    /**
+     * @param $call
+     * @return null
+     */
     public static function callback($call)
     {
         if (is_callable($call))
@@ -18,102 +18,118 @@ class Core
         return null;
     }
 
-    /*  eğer parametre varsa - bu preg, ilk süslü parantezi ve öncesini matchliyor
-        yani iki parametre gönderildiği zaman match bozuluyor
-        çoklu parametreli hali nasıl yapılır?
-    */
     /**
-     * @param $route user/profile/{id}
-     * @return null | ["user/profile","2"] - uri'deki eşleşen route ile uride geriye kalan parametreyi döndürür
+     * @param $route
+     * @param $route_data
+     * @return bool
      */
-    public static function isParam($route)
+    public static function isRoute($route, $route_data)
     {
-        if (preg_match('/(.*)\{(.*)\}/', $route, $match))
+        /* PARAMETRELİ */
+        if(preg_match_all("@{(.*?)}@", $route, $params))
         {
-            /* gelen route'daki parametrelerden ayıklanmış kısmı al-match[1]- ve trimle */
-            self::$router = trim($match[1],"/");
-            //(self::$router == "") ? self::$router = "/" : self::$router;
+            $parametre_keyleri = $params[1];
 
-            /* pars edilen o anki uri'yi slash ile birleştir */
-            self::$urim = implode(URI::parsUri(), "/");
-            //(self::$urim == "") ? self::$urim = "/" : self::$urim;
+            /* o anki uri'yi parçala */
+            $pars_uri = explode("/", Server::uri());
+            array_shift($pars_uri); //router 'ı uriden çıkart
 
-            /* gelen route'daki parametresiz kısmı uri'de ara ilk eşleşmeyi çıkart.
-               eşleşen kısmı ve
-               sona kalan kısmı-par- geri döndür */
-            if (preg_match("@(". self::$router .")(.*)@", self::$urim, $r))
+            /* gelen router'ı parçala */
+            $pars_route = explode("/", $route);
+
+            //segment kontrolü - eğer pars_route ile pars_uri parça adedi denk ise işlem yap
+            //bu sayede parametresiz router'ın aynısı parametreli şekilde gelince çakışmanın önüne geçiliyor
+            if (count($pars_route) === count($pars_uri))
             {
-                array_shift($r);
-                return $r; //[route and param]
-            }
-        }
+                /* parametreleri router'dan çıkart */
+                $unparams_router = implode(array_diff($pars_route, $params[0]), "/");
 
-        return null;
-    }
+                /* gelen router'dan parametre sıralarını param_keys dizisine depola */
+                $param_keys = array();
+                foreach ($params[0] as $item) {
+                    $param_key = array_search($item, $pars_route);
+                    array_push($param_keys, $param_key);
+                }
 
-    public static function calling($route_bank, $route_key)
-    {
-        if ($route_bank[$route_key]['closure'] === null)
-        {
-            $controllerPath = "controller/" . strtolower($route_bank[$route_key]['controller']) . ".php";
-            if (file_exists($controllerPath))
-            {
-                include $controllerPath;
+                /* yukarıda router'dan alınan parametre sıraları sayesinde uri'den parametreler param_values dizisine depolanıyor */
+                $param_values = array();
+                foreach ($param_keys as $item)
+                {
+                    if ($item <= count($pars_uri))
+                    {
+                        array_push($param_values, $pars_uri[$item]);
+                    }
+                }
 
-                $controller = new $route_bank[$route_key]['controller'];
-                $method = $route_bank[$route_key]['method'];
+                /* parametreleri uri'den çıkart */
+                $unparams_uri = implode(array_diff($pars_uri, $param_values), "/");
 
-                call_user_func_array([$controller,$method], $route_bank[$route_key]['param']);
-            }
-        }
-        else
-        {
-            call_user_func_array($route_bank[$route_key]['closure'], $route_bank[$route_key]['param']);
-        }
-    }
+                /* roter'dan preg ile çekilen parametreleri key ve uri'den parametre sırasına göre çekilen parametre değerlerinide value yap */
+                $parameters = array_combine($params[1], $param_values);
 
-    public static function getSaltUri($route)
-    {
-        if ($route === "/" && Server::uri() === "")
-        {
-            return true;
-        }
-        /* şu an parametreli routerlar için routerdan parametreyi atıp uri'de eşleştiriyor
-            ancak parametresi girildiğinde son kısım farklı olduğu için(parametresi) uri ile eşleşmiyor
-            eğer parametreli ise ayrı bir preg yapılmalı yani aşağıdaki $saltUri preg'i bu if'in else koşulu için
-        yani parametresiz routerlar için uygun. parametreli için yapılacak pregde son kısım aynı olmalı koşulmayacak ve
-            uride match olan ksıımdan geriye kalan parametre olacak- zaten sadece true dönse yeter */
-        if (preg_match('/(.*)\{(.*)\}/', $route, $m))
-        {
-            self::$currentRouter = trim($m[1], "/");
+                /* parametresiz router ile parametresiz uri denk ise controller çağrılsın */
+                if ($unparams_router === $unparams_uri)
+                {
+                    if (self::calling($route_data, $route, $parameters) == true)
+                        return true;
+                    else
+                        return false;
+                }
 
-            $pattern = "@.*(".self::$currentRouter.")@u";
-            if (preg_match($pattern, Server::uri(), $saltUri))
-            {
-                return true;
             }
         }
         else
         {
-            self::$currentRouter = $route;
+            /* PARAMETRESİZ */
 
-            $pattern = "@.*(".self::$currentRouter.")$@u";
-            if (preg_match($pattern, Server::uri(), $saltUri))
+            $pars_current_uri = explode("/", Server::uri());
+            array_shift($pars_current_uri); //şu anki uri'yi almak için birinci klasör ismini çıkartıyoruz bu base name olayına ayar çekilecek
+            $current_uri = implode($pars_current_uri, "/");
+
+            /* Eğer uri boş ise -> / */
+            if ($current_uri === "")
             {
-                /*var_dump($saltUri);*/
-                return true;
+                $current_uri = "/";
+            }
+
+            if ($route === $current_uri)
+            {
+                if (self::calling($route_data, $route) == true)
+                    return true;
+                else
+                    return false;
             }
         }
 
         return false;
-        //$pattern = '@.*('. self::getSaltRouter() .')$@';
-        //$match = preg_split($pattern, $rt);
-/*
-        $current_salt_uri = self::getSaltRouter();
-        var_dump($current_salt_uri);*/
-
-
-        //istenen uri 'ninde bu kısmı varsa eşleşsin ve uriden bu kısım alınsın bu eşleşme
-        //bağımsız olarak çalışıyor. buraya self::$currentRouter 'de geliyor ancak burada match yapmıyor?
     }
+
+    /**
+     * @param $routes_data array
+     * @param $route string
+     * @param $param array
+     * @return bool
+     */
+    public static function calling($routes_data, $route, $param = [])
+    {
+        if(is_callable($routes_data[$route]['call']))
+        {
+            call_user_func_array($routes_data[$route]['call'], $param);
+        }
+        else
+        {
+            list($controller, $method) = explode("@", $routes_data[$route]['call']);
+            $controllerPath = "controller/" . strtolower($controller) . ".php";
+            if (file_exists($controllerPath))
+            {
+                include $controllerPath;
+
+                $controller = new $controller;
+                call_user_func_array([$controller,$method], $param);
+            }
+        }
+
+        return true;
+    }
+
 }
