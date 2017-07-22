@@ -32,7 +32,7 @@ class Core
 
             /* o anki uri'yi parçala */
             $pars_uri = explode("/", Server::uri());
-            array_shift($pars_uri); //router 'ı uriden çıkart
+            //array_shift($pars_uri); //router 'ı uriden çıkart
 
             /* gelen router'ı parçala */
             $pars_route = explode("/", $route);
@@ -83,7 +83,7 @@ class Core
             /* PARAMETRESİZ */
 
             $pars_current_uri = explode("/", Server::uri());
-            array_shift($pars_current_uri); //şu anki uri'yi almak için birinci klasör ismini çıkartıyoruz bu base name olayına ayar çekilecek
+            //array_shift($pars_current_uri); //şu anki uri'yi almak için birinci klasör ismini çıkartıyoruz bu base name olayına ayar çekilecek
             $current_uri = implode($pars_current_uri, "/");
 
             /* Eğer uri boş ise -> / */
