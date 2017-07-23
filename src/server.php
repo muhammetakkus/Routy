@@ -13,7 +13,6 @@ class Server
     {
         if (defined('BASE_DIR') && !empty(BASE_DIR))
         {
-            echo "base dir var";
             $pars_full_uri = explode("/", ltrim($_SERVER["REQUEST_URI"], "/"));
             $pars_base_dir = explode("/", BASE_DIR);
 
