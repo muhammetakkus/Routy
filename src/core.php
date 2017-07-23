@@ -28,13 +28,8 @@ class Core
         /* PARAMETRELİ */
         if(preg_match_all("@{(.*?)}@", $route, $params))
         {
-            $parametre_keyleri = $params[1];
-
-            /* o anki uri'yi parçala */
             $pars_uri = explode("/", Server::uri());
-            //array_shift($pars_uri); //router 'ı uriden çıkart
 
-            /* gelen router'ı parçala */
             $pars_route = explode("/", $route);
 
             //segment kontrolü - eğer pars_route ile pars_uri parça adedi denk ise işlem yap
@@ -64,7 +59,7 @@ class Core
                 /* parametreleri uri'den çıkart */
                 $unparams_uri = implode(array_diff($pars_uri, $param_values), "/");
 
-                /* roter'dan preg ile çekilen parametreleri key ve uri'den parametre sırasına göre çekilen parametre değerlerinide value yap */
+                /* roter'dan preg ile çekilen parametreleri keylerini, uri'den parametre sırasına göre çekilen parametre değerleri ile combinle */
                 $parameters = array_combine($params[1], $param_values);
 
                 /* parametresiz router ile parametresiz uri denk ise controller çağrılsın */
@@ -81,10 +76,7 @@ class Core
         else
         {
             /* PARAMETRESİZ */
-
-            $pars_current_uri = explode("/", Server::uri());
-            //array_shift($pars_current_uri); //şu anki uri'yi almak için birinci klasör ismini çıkartıyoruz bu base name olayına ayar çekilecek
-            $current_uri = implode($pars_current_uri, "/");
+            $current_uri = Server::uri();
 
             /* Eğer uri boş ise -> / */
             if ($current_uri === "")
@@ -124,8 +116,27 @@ class Core
             {
                 include $controllerPath;
 
-                $controller = new $controller;
-                call_user_func_array([$controller,$method], $param);
+                if (class_exists($controller))
+                {
+                    $controller_object = new $controller;
+
+                    if (method_exists($controller, $method))
+                    {
+                        call_user_func_array([$controller_object,$method], $param);
+                    }
+                    else
+                    {
+                        echo $controller . " classında {$method} adında bir method tanımlı değil!";
+                    }
+                }
+                else
+                {
+                    echo $controller . " adında bir class tanımlı değil!";
+                }
+            }
+            else
+            {
+                echo $controllerPath . " dosyası tanımlı değil!";
             }
         }
 

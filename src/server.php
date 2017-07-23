@@ -11,7 +11,18 @@ class Server
 
     public static function uri()
     {
-        //basename($_SERVER['REQUEST_URI']).PHP_EOL;
+        if (defined('BASE_DIR') && !empty(BASE_DIR))
+        {
+            echo "base dir var";
+            $pars_full_uri = explode("/", ltrim($_SERVER["REQUEST_URI"], "/"));
+            $pars_base_dir = explode("/", BASE_DIR);
+
+            $salt_uri = array_diff($pars_full_uri, $pars_base_dir);
+            $salt_uri = implode("/", $salt_uri);
+
+            return $salt_uri;
+        }
+
         return ltrim($_SERVER["REQUEST_URI"], "/");
     }
 
