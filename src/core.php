@@ -21,9 +21,10 @@ class Core
     /**
      * @param $route
      * @param $route_data
+     * @param $request
      * @return bool
      */
-    public static function isRoute($route, $route_data)
+    public static function isRoute($route, $route_data, $request)
     {
         /* PARAMETRELİ */
         if(preg_match_all("@{(.*?)}@", $route, $params))
@@ -65,7 +66,7 @@ class Core
                 /* parametresiz router ile parametresiz uri denk ise controller çağrılsın */
                 if ($unparams_router === $unparams_uri)
                 {
-                    if (self::calling($route_data, $route, $parameters) == true)
+                    if (self::calling($route_data, $route, $request, $parameters) == true)
                         return true;
                     else
                         return false;
@@ -86,7 +87,7 @@ class Core
 
             if ($route === $current_uri)
             {
-                if (self::calling($route_data, $route) == true)
+                if (self::calling($route_data, $route, $request) == true)
                     return true;
                 else
                     return false;
@@ -97,50 +98,75 @@ class Core
     }
 
     /**
-     * @param $routes_data array
-     * @param $route string
-     * @param $param array
+     * @param $routes_data
+     * @param $route
+     * @param $request
+     * @param array $param
      * @return bool
      */
-    public static function calling($routes_data, $route, $param = [])
+    public static function calling($routes_data, $route, $request, $param = [])
     {
-        if(is_callable($routes_data[$route]['call']))
+        if (Server::method() === $request)
         {
-            call_user_func_array($routes_data[$route]['call'], $param);
+            if(is_callable($routes_data[$route]['call']))
+            {
+                call_user_func_array($routes_data[$route]['call'], $param);
+            }
+            else
+            {
+                self::run($routes_data, $route, $param);
+            }
         }
         else
         {
-            list($controller, $method) = explode("@", $routes_data[$route]['call']);
-            $controllerPath = "controller/" . strtolower($controller) . ".php";
-            if (file_exists($controllerPath))
+            echo "invalid request";
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $routes_data
+     * @param $route
+     * @param $param
+     * @return bool|string if class&method runned return true or return $error
+     */
+    public static function run($routes_data, $route, $param)
+    {
+        list($controller, $method) = explode("@", $routes_data[$route]['call']);
+
+        $controllerPath = "controller/" . $controller . ".php";
+
+        if (file_exists($controllerPath))
+        {
+            require_once $controllerPath;
+
+            if (class_exists($controller))
             {
-                include $controllerPath;
+                $controller_object = new $controller;
 
-                if (class_exists($controller))
+                if (method_exists($controller, $method))
                 {
-                    $controller_object = new $controller;
+                    call_user_func_array([$controller_object,$method], $param);
 
-                    if (method_exists($controller, $method))
-                    {
-                        call_user_func_array([$controller_object,$method], $param);
-                    }
-                    else
-                    {
-                        echo $controller . " classında {$method} adında bir method tanımlı değil!";
-                    }
+                    return true;
                 }
                 else
                 {
-                    echo $controller . " adında bir class tanımlı değil!";
+                    $error = "there isn't {$method} method in {$controller} class!";
                 }
             }
             else
             {
-                echo $controllerPath . " dosyası tanımlı değil!";
+                $error = "a class named {$controller} is not defined.";
             }
         }
+        else
+        {
+            $error = "{$controllerPath} file not created!";
+        }
 
-        return true;
+        echo $error;
     }
 
 }

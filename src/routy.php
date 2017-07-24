@@ -10,7 +10,7 @@ class Routy
     private static $_routes;
 
     /**
-     * @var bool route verify
+     * @var bool for route verify - if route verifed and calling controller status changes true
      */
     private static $status = false;
 
@@ -31,7 +31,30 @@ class Routy
 
         self::$_routes[$route] = $data;
 
-        if (Core::isRoute($route, self::$_routes) === true)
+        if (Core::isRoute($route, self::$_routes, "GET") === true)
+        {
+            self::$status = true;
+        }
+    }
+
+    /**
+     * @param $route string
+     * @param $call
+     */
+    public static function post($route, $call)
+    {
+        if ($route != "/")
+        {
+            $route = trim($route, "/");
+        }
+
+        $data = array(
+            'call' => $call
+        );
+
+        self::$_routes[$route] = $data;
+
+        if (Core::isRoute($route, self::$_routes, "POST") === true)
         {
             self::$status = true;
         }
