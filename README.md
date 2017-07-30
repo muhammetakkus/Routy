@@ -2,7 +2,7 @@
 Simple Routing System for PHP Projects
 
 # Install
-```php
+```
 composer require mak/routy
 ```
 # Usage
