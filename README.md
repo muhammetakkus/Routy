@@ -26,11 +26,11 @@ Routy::get("admin/user/{id}/name/{username}", "Admin@Index");
 Routy::check();
 ```
 
-if your project inside a dir like
+if your project inside a dir like this
 ```
 host/dir/project
 ```
-you must set like this
+you must define BASE_DIR
 ```php
 define("BASE_DIR", "your_dir_name");
 ```
