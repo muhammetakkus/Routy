@@ -20,9 +20,7 @@ Routy::post("test/post/{id}", function ($id){
     echo $id;
 });
 
-Routy::get("admin/user/{id}/name/{username}", function ($id, $name){
-    echo "Welcome to admin panel <b>" . $name . "</b> id = " . $id;
-});
+Routy::get("admin/user/{id}/name/{username}", "Admin@Index");
 /**/
 
 Routy::check();
