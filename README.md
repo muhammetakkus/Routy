@@ -35,7 +35,7 @@ Routy::check();
 
 if your project inside a dir like this
 ```
-host/dir/project
+YOUR_HOST/dir/project
 ```
 you must define BASE_DIR
 ```php
