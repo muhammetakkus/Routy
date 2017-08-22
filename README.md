@@ -7,22 +7,28 @@ composer require mak/routy
 ```
 # Usage
 ```php
+//
 require_once "vendor/autoload.php";
 
+//
 use Routy\Routy;
 
-/**/
+/* basic get */
 Routy::get("/", function (){
     echo "<h2>home page</h2>";
 });
 
+/* post with parameter */
 Routy::post("test/post/{id}", function ($id){
     echo $id;
 });
 
-Routy::get("admin/user/{id}/name/{username}", "Admin@Index");
-/**/
+/* post with parameter */
 
+/* complicated */
+Routy::get("admin/user/{id}/name/{username}", "Admin@Index");
+
+//
 Routy::check();
 ```
 
