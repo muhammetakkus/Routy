@@ -18,14 +18,15 @@ Routy::get("/", function (){
     echo "<h2>home page</h2>";
 });
 
+/* get with parameter */
+Routy::get("user/profile/{id}", "User@Profile");
+
 /* post with parameter */
 Routy::post("test/post/{id}", function ($id){
     echo $id;
 });
 
-/* post with parameter */
-
-/* complicated */
+/* more complicated */
 Routy::get("admin/user/{id}/name/{username}", "Admin@Index");
 
 //
