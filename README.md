@@ -7,7 +7,7 @@ composer require cooky/url-router (or url-router=dev-master)
 ```
 
 # Setting
--set your controller files path in `vendor/cooky/url-router/src/config.php`
+-set your controller path in `vendor/cooky/url-router/src/config.php`
 
 -if your project inside a dir like this
 ```
