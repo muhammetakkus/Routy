@@ -3,7 +3,8 @@ Simple Routing System for PHP Projects
 
 # Install
 ```
-composer require cooky/url-router
+composer require cooky/url-router (or url-router=dev-master
+)
 ```
 # Usage
 ```php
