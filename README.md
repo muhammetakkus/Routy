@@ -33,7 +33,7 @@ Routy::get("admin/user/{id}/name/{username}", "Admin@Index");
 Routy::check();
 ```
 
-//this usage overlaps and work in both
+this usage overlaps and work in both
 ```php
 Routy::get("user/profile/{id}", "TestOne@Index");
 Routy::get("user/profile/x", "TestTwo@Index");
@@ -44,4 +44,3 @@ if your project inside a dir like this
 YOUR_HOST/base_dir/project
 ```
 you must define your project base directory in config.php
-
