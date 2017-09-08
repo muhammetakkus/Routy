@@ -1,6 +1,7 @@
 {
   "name": "routy",
   "license": "MIT",
+  "description": "Simple PHP Router",
   "authors": [
     {
       "name": "Muhammet Akkuş",
