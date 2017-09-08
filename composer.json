@@ -1,4 +1,12 @@
 {
+  "name": "routy",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Muhammet Akkuş",
+      "email": "muhammetakkuss34@gmail.com"
+    }
+  ],
   "require": {
   },
   "autoload": {

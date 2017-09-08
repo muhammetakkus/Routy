@@ -2,6 +2,8 @@
 
 namespace Routy;
 
+
+
 class Core
 {
     /**
@@ -26,7 +28,7 @@ class Core
      */
     public static function isRoute($route, $route_data, $request)
     {
-        /* PARAMETRELİ */
+        /** Parametreli **/
         if(preg_match_all("@{(.*?)}@", $route, $params))
         {
             $pars_uri = explode("/", Server::uri());
@@ -41,20 +43,17 @@ class Core
                 $unparams_router = implode(array_diff($pars_route, $params[0]), "/");
 
                 /* gelen router'dan parametre sıralarını param_keys dizisine depola */
-                $param_keys = array();
+                $param_orders = array();
                 foreach ($params[0] as $item) {
                     $param_key = array_search($item, $pars_route);
-                    array_push($param_keys, $param_key);
+                    array_push($param_orders, $param_key);
                 }
 
                 /* yukarıda router'dan alınan parametre sıraları sayesinde uri'den parametreler param_values dizisine depolanıyor */
                 $param_values = array();
-                foreach ($param_keys as $item)
+                foreach ($param_orders as $item)
                 {
-                    if ($item <= count($pars_uri))
-                    {
-                        array_push($param_values, $pars_uri[$item]);
-                    }
+                    array_push($param_values, $pars_uri[$item]);
                 }
 
                 /* parametreleri uri'den çıkart */
@@ -76,7 +75,7 @@ class Core
         }
         else
         {
-            /* PARAMETRESİZ */
+            /** Parametresiz **/
             $current_uri = Server::uri();
 
             /* Eğer uri boş ise -> / */
@@ -108,13 +107,17 @@ class Core
     {
         if (Server::method() === $request)
         {
-            if(is_callable($routes_data[$route]['call']))
+            if(is_callable($routes_data[$route]))
             {
-                call_user_func_array($routes_data[$route]['call'], $param);
+                call_user_func_array($routes_data[$route], $param);
             }
             else
             {
-                self::run($routes_data, $route, $param);
+                try{
+                    self::run($routes_data, $route, $param);
+                }catch (\Exception $e){
+                    echo $e->getMessage();
+                }
             }
         }
         else
@@ -126,16 +129,20 @@ class Core
     }
 
     /**
+     * if class&method runned return true or throw $error
+     *
      * @param $routes_data
      * @param $route
      * @param $param
-     * @return bool|string if class&method runned return true or return $error
+     * @return bool|string
      */
     public static function run($routes_data, $route, $param)
     {
-        list($controller, $method) = explode("@", $routes_data[$route]['call']);
+        list($controller, $method) = explode("@", $routes_data[$route]);
 
-        $controllerPath = "controller/" . $controller . ".php";
+        $config = require 'config.php';
+
+        $controllerPath = $config['path']['controller'] . DIRECTORY_SEPARATOR . $controller . ".php";
 
         if (file_exists($controllerPath))
         {
@@ -153,20 +160,17 @@ class Core
                 }
                 else
                 {
-                    $error = "there isn't {$method} method in {$controller} class!";
+                    throw new \Exception("there isn't {$method} method in {$controller} class!");
                 }
             }
             else
             {
-                $error = "a class named {$controller} is not defined.";
+                throw new \Exception("a class named {$controller} is not defined.");
             }
         }
         else
         {
-            $error = "{$controllerPath} file not created!";
+            throw new \Exception("{$controllerPath} file not created!");
         }
-
-        echo $error;
     }
-
 }

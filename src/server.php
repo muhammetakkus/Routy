@@ -10,14 +10,18 @@ class Server
     }
 
     /**
-     * @return string if defined BASE_DIR return unbasedir uri
+     * if defined BASE_DIR return unbasedir uri
+     * @return string
      */
     public static function uri()
     {
-        if (defined('BASE_DIR') && !empty(BASE_DIR))
+        $config = require 'config.php';
+        $project_base = $config['path']['project_base_dir'];
+
+        if (!empty($project_base))
         {
             $pars_full_uri = explode("/", ltrim($_SERVER["REQUEST_URI"], "/"));
-            $pars_base_dir = explode("/", BASE_DIR);
+            $pars_base_dir = explode("/", $project_base);
 
             $salt_uri = array_diff($pars_full_uri, $pars_base_dir);
             $salt_uri_implode = implode("/", $salt_uri);

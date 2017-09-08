@@ -5,12 +5,15 @@ namespace Routy;
 class Routy
 {
     /**
-     * @var $_routes string stored routes and data
+     * stored routes and data
+     * @var $_routes string
      */
     private static $_routes;
 
     /**
-     * @var bool for route verify - if route verifed and calling controller status changes true
+     * for route verify
+     * the controller is called if url matches the route and $status turned true
+     * @var bool
      */
     private static $status = false;
 
@@ -25,11 +28,11 @@ class Routy
             $route = trim($route, "/");
         }
 
-        $data = array(
+        /*$data = array(
             'call' => $call
-        );
+        );*/
 
-        self::$_routes[$route] = $data;
+        self::$_routes[$route] = $call;
 
         if (Core::isRoute($route, self::$_routes, "GET") === true)
         {
@@ -48,11 +51,11 @@ class Routy
             $route = trim($route, "/");
         }
 
-        $data = array(
+        /*$data = array(
             'call' => $call
-        );
+        );*/
 
-        self::$_routes[$route] = $data;
+        self::$_routes[$route] = $call;
 
         if (Core::isRoute($route, self::$_routes, "POST") === true)
         {
@@ -61,13 +64,13 @@ class Routy
     }
 
     /**
-     * check correct uri
+     * check correct router
      */
     public static function check()
     {
         if (self::$status === false)
         {
-            echo "page not found - redirect 404.php";
+            echo "there isn't any router like this";
         }
     }
 
