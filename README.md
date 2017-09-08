@@ -3,7 +3,7 @@ Simple Routing System for PHP Projects
 
 # Install
 ```
-composer require mak/routy
+composer require cooky/url-router
 ```
 # Usage
 ```php
