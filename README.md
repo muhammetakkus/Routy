@@ -7,8 +7,15 @@ composer require cooky/url-router (or url-router=dev-master)
 ```
 
 # Setting
-set your controller files path in `vendor/cooky/url-router/src/config.php`
+-set your controller files path in `vendor/cooky/url-router/src/config.php`
 
+-if your project inside a dir like this
+```
+YOUR_HOST/base_dir/project
+```
+you must define your project base directory in `vendor/cooky/url-router/src/config.php`
+
+-and you have to create a .htaccess file your base directory (you can copy `vendor/cooky/url-router/.htaccess`)
 # Usage
 ```php
 //
@@ -43,8 +50,4 @@ Routy::get("user/profile/{id}", "TestOne@Index");
 Routy::get("user/profile/x", "TestTwo@Index");
 ```
 
-if your project inside a dir like this
-```
-YOUR_HOST/base_dir/project
-```
-you must define your project base directory in `vendor/cooky/url-router/src/config.php`
+
