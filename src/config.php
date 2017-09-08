@@ -3,6 +3,6 @@
 return [
     'path' => [
         'controller' => 'controller',
-        'project_base_dir' => 'routy'
+        'project_base_dir' => ''
     ]
 ];
