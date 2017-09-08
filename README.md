@@ -3,9 +3,12 @@ Simple Routing System for PHP Projects
 
 # Install
 ```
-composer require cooky/url-router (or url-router=dev-master
-)
+composer require cooky/url-router (or url-router=dev-master)
 ```
+
+# Setting
+set your controller files path in `vendor/cooky/url-router/src/config.php`
+
 # Usage
 ```php
 //
@@ -44,4 +47,4 @@ if your project inside a dir like this
 ```
 YOUR_HOST/base_dir/project
 ```
-you must define your project base directory in config.php
+you must define your project base directory in `vendor/cooky/url-router/src/config.php`
