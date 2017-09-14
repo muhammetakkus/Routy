@@ -71,7 +71,10 @@ class Routy
         if (self::$status === false)
         {
             echo "there isn't any router like this";
-        }
+			return false;
+		}
+		
+		return true;
     }
 
 }
