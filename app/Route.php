@@ -2,7 +2,7 @@
 
 namespace Routy;
 
-class Routy
+class Route
 {
     /**
      * stored routes and data
@@ -23,21 +23,13 @@ class Routy
      */
     public static function get($route, $call)
     {
-        if ($route != "/")
-        {
-            $route = trim($route, "/");
-        }
+        $clean_route = Helper::clearRoute($route);
+        
+        /* yazılan rotanın tamamını, çağrılacak fonksiyonu ile array'a al ve Core.php'a gönder */
+        self::$_routes[$clean_route] = $call;
 
-        /*$data = array(
-            'call' => $call
-        );*/
-
-        self::$_routes[$route] = $call;
-
-        if (Core::isRoute($route, self::$_routes, "GET") === true)
-        {
-            self::$status = true;
-        }
+        $core = new Core();
+        $core->handle($clean_route, self::$_routes, 'GET');
     }
 
     /**
@@ -70,7 +62,7 @@ class Routy
     {
         if (self::$status === false)
         {
-            echo "there isn't any router like this";
+            //echo "there isn't any router like this";
 			return false;
 		}
 		
