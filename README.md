@@ -28,7 +28,7 @@ Route::post('test/post/{id}', function ($id){
 });
 ```
 
-this usage overlaps and work in both
+this usage overlaps and the first one works so not recommended
 ```php
 Routy::get('user/profile/{id}', 'TestOne@Index');
 Routy::get('user/profile/test', 'TestTwo@Index');
