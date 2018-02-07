@@ -4,18 +4,11 @@ namespace Routy;
 
 class Route
 {
-    /**
-     * stored routes and data
-     * @var $_routes string
-     */
-    private static $_routes;
 
     /**
-     * for route verify
-     * the controller is called if url matches the route and $status turned true
-     * @var bool
+     * store routes and data
      */
-    private static $status = false;
+    private static $_route;
 
     /**
      * @param $route string
@@ -26,10 +19,10 @@ class Route
         $clean_route = Helper::clearRoute($route);
         
         /* yazılan rotanın tamamını, çağrılacak fonksiyonu ile array'a al ve Core.php'a gönder */
-        self::$_routes[$clean_route] = $call;
+        self::$_route[$clean_route] = $call;
 
         $core = new Core();
-        $core->handle($clean_route, self::$_routes, 'GET');
+        $core->handle($clean_route, self::$_route, 'GET');
     }
 
     /**
@@ -38,35 +31,12 @@ class Route
      */
     public static function post($route, $call)
     {
-        if ($route != "/")
-        {
-            $route = trim($route, "/");
-        }
+        $clean_route = Helper::clearRoute($route);
+        
+        /* yazılan rotanın tamamını, çağrılacak fonksiyonu ile array'a al ve Core.php'a gönder */
+        self::$_route[$clean_route] = $call;
 
-        /*$data = array(
-            'call' => $call
-        );*/
-
-        self::$_routes[$route] = $call;
-
-        if (Core::isRoute($route, self::$_routes, "POST") === true)
-        {
-            self::$status = true;
-        }
+        $core = new Core();
+        $core->handle($clean_route, self::$_route, 'POST');
     }
-
-    /**
-     * check correct router
-     */
-    public static function check()
-    {
-        if (self::$status === false)
-        {
-            //echo "there isn't any router like this";
-			return false;
-		}
-		
-		return true;
-    }
-
 }

@@ -6,78 +6,68 @@ class Helper
 {
     public static $full_route;
     public static $parameters;
-    public static function parse_route($full_route)
-    {
-        // gelen router parametreli mi değil mi kontrol edilir
-        // $_val[$router] => $params[] şeklinde gönderilir - bu daha uygun nasıl gönderilir?
-        /**
-         * preg_match_all php 7 ile gelen fonksiyonuna bak
-         * array_diff
-         * strpos 
-         * strstr
-         */
-
-         // temizle + parametresiz ise uri ile match et
-         // temizle + parametreli ise parametrelerinden soy + temizle + uri ile match et
-    
-         static::$full_route = $full_route;
-
-         /**
-          * match parameters
-          * user/{id} -> {id}
-          */
-         if(preg_match("@{.*}@", static::$full_route, $params))
+    public static function parse_route(string $full_route): array
+    {    
+         if(preg_match("@{.*}@", $full_route, $params))
          {
-             //$params = $params[1]; // test/{id}/{id2} => [id, id2]
              self::$parameters = self::clear($params[0]);
+         }else {
+            self::$parameters = false;
          }
          
          /**
           * split route
           * user/{id} -> user bu user/ olsa da route ile match etsek
           */
-         $paramless_route = preg_split('@{(.*)}@', static::$full_route);
+         $paramless_route = preg_split('@{(.*)}@', $full_route);
          $paramless_route = $paramless_route[0];
-         
-         //echo $paramless_route;
+
          $_routes = [$paramless_route, self::$parameters];
-        
+
          return $_routes;
 
          /* bu pattern sadece en son parametre ile match oluyor bütün parametrelerle match olması için nasıl olmalıydı?
-         if(preg_match_all("@(.*){(?:.*)}@", static::$full_route, $paramless_route, 2))
+         if(preg_match_all("@(.*){(?:.*)}@", $full_route, $paramless_route, 2))
          {
             var_dump($paramless_route);
          } */
-         
-         // şu şekilde bir rotanın patterni nasıl yazılır
-         /* admin/user/{id}/name/{username} */
     }
     
     /**
      * Slashlardan temizlenmiş parametreli URI ile
-     * Slashlardan temizlenmiş parametreli rota'nın segment kontrolünü yapar
+     * Slashlardan temizlenmiş parametreli rote'ı pars eder
+     * segment kontrolünü yapar eğer segmentler eşit ise route ile uri adedi eşit
+     * ve parametreler alınıp run edilebilir demektir
      */
-    public static function segment($full_route)
+    public static function segment($full_route, $params)
     {
-        /** */
-        $pars_uri = explode("/", self::uri());
+        /* parametreli route'ın parametresiz hali */
+        $route_without_param = explode($params, $full_route);
+
         $pars_route = explode("/", $full_route);
+
+        $uri = self::uri() === '/' ? '' : self::uri();
+        $pars_uri = explode("/", $uri);
 
         $uri_segment = count($pars_uri);
         $route_segment = count($pars_route);
-
-      
-        echo "uri: " . $uri_segment;
-        echo PHP_EOL;
-        echo "route: " . $route_segment;
 
         if ($uri_segment === $route_segment)
         {
             return true;
         }
 
-        return false; // redirect 404 olmaz bu sefer üst sırada olan ve segment uymayan rota çalışır 404 gider?
+        return false; // redirect 404 - olmaz bu sefer üst sırada olan ve segment uymayan rota çalışır 404 gider?
+    }
+
+    public static function getParams($mock_params)
+    {
+        $parse_mock_params = explode('/', $mock_params);
+        $pars_uri = explode("/", self::uri());
+
+        $real_params = array_diff($pars_uri, $parse_mock_params);
+        
+        return $real_params;
     }
 
     /**
@@ -91,7 +81,7 @@ class Helper
     /**
      * @return bool
      */
-    public static function isAjax()
+    public static function is_ajax()
     {
         if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
             strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
