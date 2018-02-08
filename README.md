@@ -1,6 +1,5 @@
 # Routy
 Simple Routing System for PHP Projects
-[![GitHub release](https://img.shields.io/github/release/qubyte/rubidium.svg)]()
 
 # Install
 ```
