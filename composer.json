@@ -8,10 +8,14 @@
     }
   ],
   "require": {
+    "php": "^7.0"
   },
   "minimum-stability": "dev",
   "prefer-stable" : true,
   "autoload": {
-    "psr-4": { "Routy\\": "app" }
+    "psr-4": { 
+      "Routy\\": "router",
+      "View\\": "view"
+    }
   }
 }

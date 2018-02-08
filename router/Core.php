@@ -1,10 +1,8 @@
 <?php
 
 namespace Routy;
-
-
-
-class Core
+use Routy\Config;
+class Core extends Config
 {
     /**
      * @param $full_route
@@ -93,19 +91,20 @@ class Core
     public function run($route_data, $route, $params, $request)
     {
         
-        $this->check_http_request($request);
+        $check_request = $this->check_http_request($request);
 
-        // burası gelen route callback mi string/controller mı diye bakılıp ona göre alttaki kısım çalıştırılmalı
-        $this->runTheCallback($route_data, $route, $params);
-        
-        //
-        list($controller_name, $method_name) = explode("@", $route_data[$route]);
+        if($check_request)
+        {
+            // burası gelen route callback mi string/controller mı diye bakılıp ona göre alttaki kısım çalıştırılmalı
+            $this->runTheCallback($route_data, $route, $params);
+            
+            //
+            list($controller_name, $method_name) = explode("@", $route_data[$route]);
 
-        $this->callTheController($controller_name);
+            $this->callTheController($controller_name);
 
-        $this->runTheController($controller_name, $method_name, $params);
-
-        die();
+            $this->runTheController($controller_name, $method_name, $params);
+        }
     }
 
     /**
@@ -118,7 +117,7 @@ class Core
             return true;
         }
 
-        die('invalid request ' . $request);
+        return false;
     }
 
     /**
@@ -126,14 +125,15 @@ class Core
      */
     public function callTheController($controller_name)
     {
-        $config = require 'Config.php';
+        $configFile = $this->getConfigFile();
+        $conf = require $configFile;
 
-        $controller_path = $config['controller'] . '/' . $controller_name . ".php";
+        $controller_path =  $conf['controller'] . $controller_name . ".php";
 
         if (!file_exists($controller_path))
         {
             throw new \Exception("{$controller_path} file not created!");
-            die ('{$controller_path} Doesn\'t exist');
+            die ();
         }
 
         require_once $controller_path;
