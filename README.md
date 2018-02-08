@@ -92,7 +92,7 @@ Route::post('test/post/{id}', function ($id){
         {{message}}
     </div>
 
-    <!-- pass data -->
+    <!-- pass data from controller -->
     <div><?php echo $test; ?></div>
 @stop
 
@@ -106,8 +106,10 @@ Route::post('test/post/{id}', function ($id){
         })
     </script>
 @stop
+```
 
-/* Home controller - ever controller must be extends with Loader for view */
+```php
+/* Home controller - every controller must be extends with Loader for view */
 <?php use View\Loader;
 class Home extends Loader
 {
