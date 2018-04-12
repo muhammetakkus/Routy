@@ -1,18 +1,16 @@
-<?php
+<?php namespace Routy;
 
-namespace Routy;
-use Routy\Config;
-class Core extends Config
+class Core
 {
     /**
      * @param $full_route
      * @param $route_data
      * @param $request
-     * @return mixed
+     * @throws \Exception
      */
     public function handle($full_route, $route_data, $request)
     {
-        $route_with_params = Helper::parse_route($full_route); 
+        $route_with_params = Helper::parse_route($full_route);
 
         /* parametre yok ise [$params === false] olur */
         list($route_paramless, $params) = $route_with_params;
@@ -27,14 +25,13 @@ class Core extends Config
             if ($is_segment_equal)
             {
                 $real_params = Helper::getParams($full_route);
-                
+
                 $uri_paramless = $this->paramUriAndParamRouteIsEqual($real_params);
-                
+
                 if ($route_paramless === $uri_paramless)
                 {
                     $this->run($route_data, $full_route, $real_params, $request);
                 }
-                
             }
         }
 
@@ -43,10 +40,13 @@ class Core extends Config
         {
             $this->run($route_data, $route_paramless, [], $request);
         }
-        
+
+        // $this->errorPage();
+        // die(var_dump($params));
+
         /*  legacy
 
-            gelen router'dan parametre sıralarını param_keys dizisine depola 
+            gelen router'dan parametre sıralarını param_keys dizisine depola
             $param_orders = array();
             foreach ($params as $item) {
                 $param_key = array_search($item, $pars_route);
@@ -70,7 +70,7 @@ class Core extends Config
     {
         /* parametreli route ve uri parametresiz olarak denk mi kontrol et */
         $param_string = implode('/', $real_params);
-                
+
         if ($param_string === '')
         {
             $uri_paramless = Helper::uri();
@@ -87,17 +87,18 @@ class Core extends Config
      * @param $route
      * @param $params
      * @param $request
+     * @throws \Exception
      */
     public function run($route_data, $route, $params, $request)
     {
-        
+
         $check_request = $this->check_http_request($request);
 
         if($check_request)
         {
             // burası gelen route callback mi string/controller mı diye bakılıp ona göre alttaki kısım çalıştırılmalı
             $this->runTheCallback($route_data, $route, $params);
-            
+
             //
             list($controller_name, $method_name) = explode("@", $route_data[$route]);
 
@@ -105,10 +106,12 @@ class Core extends Config
 
             $this->runTheController($controller_name, $method_name, $params);
         }
+
+        die();
     }
 
     /**
-     * 
+     *
      */
     public function check_http_request($request)
     {
@@ -117,23 +120,22 @@ class Core extends Config
             return true;
         }
 
-        return false;
+        Helper::errorPage();
     }
 
     /**
-     * must be refactor..
+     * @param $controller_name
+     * @throws \Exception
+     *
+     * refactor!
      */
     public function callTheController($controller_name)
     {
-        $configFile = $this->getConfigFile();
-        $conf = require $configFile;
-
-        $controller_path =  $conf['controller'] . $controller_name . ".php";
+        $controller_path =  \Config\Config::get('router.controller') . $controller_name . ".php";
 
         if (!file_exists($controller_path))
         {
             throw new \Exception("{$controller_path} file not created!");
-            die ();
         }
 
         require_once $controller_path;
@@ -146,29 +148,22 @@ class Core extends Config
     {
         if (class_exists($controller_name))
         {
-            $controller_object = new $controller_name;
+            $controller_object = new $controller_name();
 
             if (method_exists($controller_name, $method_name))
             {
                 call_user_func_array([$controller_object, $method_name], $params);
-
                 return true;
             }
-            else
-            {
-                throw new \Exception('there isn\'t {$method} method in {$controller} class!');
-            }
-        }
-        else
-        {
-            throw new \Exception('a class name {$controller} is not defined!');
+
+            throw new \Exception('there isn\'t {$method} method in {$controller} class!');
         }
 
-        die();
+        throw new \Exception('a class name {$controller} is not defined!');
     }
 
     /**
-     * 
+     *
      */
     public function runTheCallback($route_data, $route, $params)
     {

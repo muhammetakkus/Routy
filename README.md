@@ -1,11 +1,11 @@
 # Routy
-Simple Routing System for PHP Projects
+Simple Routing and View System for PHP Projects
 
 # Install
 ```
 composer require cooky/url-router
 ```
-# For Nginx - your_nginx.conf
+# For Nginx - default_nginx.conf
 ```
 root your_project_dir
 location / {
@@ -18,18 +18,13 @@ location / {
 RewriteEngine On
 RewriteRule ^(.*)$ index.php/$1 [QSA,L]
 ```
+# Configration
+*vendor/cooky/url-router/config/configs/*
 
 # Router Usage
 ```php
 /* main index.php */
 require_once 'vendor/autoload.php';
-
-/* CONFIG */
-use Routy\Config;
-(new Config())->set([
-    'controller' => 'app/my_controller_path',
-    'view' => 'app/my_views'
-]);
 
 /* */
 use Routy\Route;
@@ -48,6 +43,8 @@ Route::get('user/profile/{id}', 'User@Profile');
 Route::post('test/post/{id}', function ($id){
     echo $id;
 });
+
+Route::complete();
 ```
 # Templating
 ```php
@@ -118,10 +115,4 @@ class Home extends Loader
         $this->view('main', $data);
     }
 }
-```
-
-this usage overlaps and the first one works so not recommended
-```php
-Routy::get('user/profile/{id}', 'TestOne@Index');
-Routy::get('user/profile/test', 'TestTwo@Index');
 ```

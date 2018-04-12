@@ -13,9 +13,10 @@
   "minimum-stability": "dev",
   "prefer-stable" : true,
   "autoload": {
-    "psr-4": { 
+    "psr-4": {
       "Routy\\": "router",
-      "View\\": "view"
+      "View\\": "view",
+      "Config\\": "config"
     }
   }
 }

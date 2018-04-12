@@ -1,8 +1,6 @@
 <?php namespace View;
 
-use Routy\Config;
-
-class Loader extends Config
+class Loader
 {
     /**
      * @param $file string
@@ -13,12 +11,9 @@ class Loader extends Config
         ob_start();
 
         extract($data, EXTR_SKIP);
-
-        $configFile = $this->getConfigFile();
-        $conf = require $configFile;
         
         /* view'a gönderilen dosyayı aç */
-        $filePath = $conf['view'] . $file . '.php';
+        $filePath = trim(\Config\Config::get('view.view'), '/') . '/' . $file . '.php';
 
         if(file_exists($filePath))
             require_once $filePath;

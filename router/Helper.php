@@ -1,20 +1,19 @@
-<?php
-
-namespace Routy;
+<?php namespace Routy;
 
 class Helper
 {
     public static $full_route;
     public static $parameters;
+
     public static function parse_route(string $full_route): array
-    {    
+    {
          if(preg_match("@{.*}@", $full_route, $params))
          {
              self::$parameters = self::clear($params[0]);
          }else {
             self::$parameters = false;
          }
-         
+
          /**
           * split route
           * user/{id} -> user bu user/ olsa da route ile match etsek
@@ -32,10 +31,10 @@ class Helper
             var_dump($paramless_route);
          } */
     }
-    
+
     /**
      * Slashlardan temizlenmiş parametreli URI ile
-     * Slashlardan temizlenmiş parametreli rote'ı pars eder
+     * Slashlardan temizlenmiş parametreli roter'ı pars eder
      * segment kontrolünü yapar eğer segmentler eşit ise route ile uri adedi eşit
      * ve parametreler alınıp run edilebilir demektir
      */
@@ -66,7 +65,7 @@ class Helper
         $pars_uri = explode("/", self::uri());
 
         $real_params = array_diff($pars_uri, $parse_mock_params);
-        
+
         return $real_params;
     }
 
@@ -141,5 +140,12 @@ class Helper
     public static function clear($value)
     {
         return trim($value, '/');
+    }
+
+    public static function errorPage()
+    {
+      require_once realpath('.') . '/' . trim(\Config\Config::get('view.404'), '/');
+      echo ob_get_clean();
+      die();
     }
 }
