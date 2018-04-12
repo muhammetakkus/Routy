@@ -105,9 +105,11 @@ Route::complete();
 @stop
 ```
 
+# Controller
 ```php
-/* Home controller - every controller must be extends with Loader for view */
 <?php use View\Loader;
+
+/* Home controller - every controller must be extends with Loader for view */
 class Home extends Loader
 {
     public function index(){
