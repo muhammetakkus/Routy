@@ -41,7 +41,7 @@ class Route
         $core->handle($clean_route, self::$_route, 'GET');
     }
 
-    public static function post($route, $call)
+    public static function postx($route, $call)
     {
         $clean_route = Helper::clearRoute($route);
 
@@ -51,12 +51,12 @@ class Route
         $core->handle($clean_route, self::$_route, 'POST');
     }
 
-    public static function delete($route, $call)
+    public static function deletex($route, $call)
     {
 
     }
 
-    public static function group($prefix, $call)
+    public static function groupx($prefix, $call)
     {
         // self::get($prefix, $call);
     }
