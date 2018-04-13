@@ -4,7 +4,6 @@ namespace Routy;
 
 class Route
 {
-
     /**
      * store routes and data
      */

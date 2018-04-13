@@ -1,5 +1,5 @@
 <?php
 return [
-  // path anadizin olan index'e göre belirlenir.
+  // The path is determined by the main index
   'controller' => 'Controller/'
 ];

@@ -10,7 +10,7 @@ class Helper
          if(preg_match("@{.*}@", $full_route, $params))
          {
              self::$parameters = self::clear($params[0]);
-         }else {
+         } else {
             self::$parameters = false;
          }
 

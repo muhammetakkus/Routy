@@ -41,10 +41,8 @@ class Core
             $this->run($route_data, $route_paramless, [], $request);
         }
 
-        // $this->errorPage();
-        // die(var_dump($params));
-
-        /*  legacy
+        /*
+            legacy
 
             gelen router'dan parametre sıralarını param_keys dizisine depola
             $param_orders = array();
@@ -74,7 +72,7 @@ class Core
         if ($param_string === '')
         {
             $uri_paramless = Helper::uri();
-        }else {
+        } else {
             $uri_paramless = explode($param_string, Helper::uri());
             $uri_paramless = $uri_paramless[0];
         }
