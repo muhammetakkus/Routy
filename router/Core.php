@@ -1,14 +1,16 @@
 <?php namespace Routy;
 
+use Config\Config;
+
 class Core
 {
     /**
      * @param $full_route
      * @param $route_data
-     * @param $request
+     * @param $request_method
      * @throws \Exception
      */
-    public function handle($full_route, $route_data, $request)
+    public function handle($full_route, $route_data, $request_method)
     {
         $route_with_params = Helper::parse_route($full_route);
 
@@ -30,7 +32,7 @@ class Core
 
                 if ($route_paramless === $uri_paramless)
                 {
-                    $this->run($route_data, $full_route, $real_params, $request);
+                    $this->run($route_data, $full_route, $real_params, $request_method);
                 }
             }
         }
@@ -38,7 +40,7 @@ class Core
         /* PARAMETRESİZ */
         if (!$params && $route_paramless === Helper::uri())
         {
-            $this->run($route_data, $route_paramless, [], $request);
+            $this->run($route_data, $route_paramless, [], $request_method);
         }
 
         /*
@@ -66,7 +68,7 @@ class Core
 
     public function paramUriAndParamRouteIsEqual($real_params)
     {
-        /* parametreli route ve uri parametresiz olarak denk mi kontrol et */
+        /* parametreli route =???= parametresiz uri  */
         $param_string = implode('/', $real_params);
 
         if ($param_string === '')
@@ -84,13 +86,12 @@ class Core
      * @param $route_data
      * @param $route
      * @param $params
-     * @param $request
+     * @param $request_method
      * @throws \Exception
      */
-    public function run($route_data, $route, $params, $request)
+    public function run($route_data, $route, $params, $request_method)
     {
-
-        $check_request = $this->check_http_request($request);
+        $check_request = $this->check_http_request($request_method);
 
         if($check_request)
         {
@@ -98,7 +99,7 @@ class Core
             $this->runTheCallback($route_data, $route, $params);
 
             //
-            list($controller_name, $method_name) = explode("@", $route_data[$route]);
+            list($controller_name, $method_name) = explode('@', $route_data[$route]);
 
             $this->callTheController($controller_name);
 
@@ -111,9 +112,9 @@ class Core
     /**
      *
      */
-    public function check_http_request($request)
+    public function check_http_request($request_method)
     {
-        if (Helper::method() === $request)
+        if (Helper::method() === $request_method)
         {
             return true;
         }
@@ -129,11 +130,11 @@ class Core
      */
     public function callTheController($controller_name)
     {
-        $controller_path =  \Config\Config::get('router.controller') . $controller_name . ".php";
+        $controller_path =  trim(Config::get('router.controller'), '/') . '/' . $controller_name . ".php";
 
         if (!file_exists($controller_path))
         {
-            throw new \Exception("{$controller_path} file not created!");
+            throw new \Exception('<b>{$controller_path}</b> file not created!');
         }
 
         require_once $controller_path;
@@ -154,10 +155,10 @@ class Core
                 return true;
             }
 
-            throw new \Exception('there isn\'t {$method} method in {$controller} class!');
+            throw new \Exception('there isn\'t <b>{$method}</b> method in <b>{$controller}</b> class!');
         }
 
-        throw new \Exception('a class name {$controller} is not defined!');
+        throw new \Exception('class name <b>{$controller}</b> is not defined!');
     }
 
     /**

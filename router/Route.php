@@ -9,29 +9,25 @@ class Route
      */
     private static $_route;
 
-    public static function __callStatic($type, $args)
+    /*
+     * bu class üzerine gelen statik kullanımları yakalamak için
+     * $request_method bu class üzerinde kullanılan methodun ismini alır
+     */
+    public static function __callStatic($request_method, $args)
     {
-      if($type === 'get') {
-        self::getx($args);
-      }
+      list($route, $call) = $args;
 
-      if($type === 'post') {
-        self::postx($args);
-      }
+      $clean_route = Helper::clearRoute($route);
 
-      if($type === 'delete') {
-        self::deletex($args);
-      }
+      self::$_route[$clean_route] = $call;
 
-      if($type === 'group') {
-        self::groupx($args);
-      }
+      $core = new Core();
+      $core->handle($clean_route, self::$_route, strtoupper($request_method));
     }
 
-    public static function getx($args)
+    /*
+    public static function get($route, $call)
     {
-        list($route, $call) = $args;
-
         $clean_route = Helper::clearRoute($route);
 
         self::$_route[$clean_route] = $call;
@@ -40,7 +36,7 @@ class Route
         $core->handle($clean_route, self::$_route, 'GET');
     }
 
-    public static function postx($route, $call)
+    public static function post($route, $call)
     {
         $clean_route = Helper::clearRoute($route);
 
@@ -50,16 +46,16 @@ class Route
         $core->handle($clean_route, self::$_route, 'POST');
     }
 
-    public static function deletex($route, $call)
+    public static function delete($route, $call)
     {
 
     }
 
-    public static function groupx($prefix, $call)
+    public static function group($prefix, $call)
     {
         // self::get($prefix, $call);
     }
-
+    */
     public static function complete()
     {
       Helper::errorPage();

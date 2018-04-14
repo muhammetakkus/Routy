@@ -1,5 +1,7 @@
 <?php namespace Routy;
 
+use Config\Config;
+
 class Helper
 {
     public static $full_route;
@@ -144,7 +146,12 @@ class Helper
 
     public static function errorPage()
     {
-      require_once realpath('.') . '/' . trim(\Config\Config::get('view.404'), '/');
+      $path_404 = realpath('.') . '/' . trim(Config::get('view.404'), '/');
+
+      if(!file_exists($path_404))
+        echo 'Page Not Found';
+
+      require_once $path_404;
       echo ob_get_clean();
       die();
     }
