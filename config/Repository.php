@@ -51,14 +51,15 @@ class Repository
             return $this->getMany($key);
         }*/
 
+
         $configArray = ConfigFile::getConfigArray($this->getPageKey($key));
 
-        if ($this->items === []) {
-            return $configArray[$this->getConfigKey($key)];
-        }
 
-        //
-        return $this->items[$key];
+        //if ($this->items === []) {
+            return $configArray[$this->getConfigKey($key)];
+        //}
+
+        //return $this->items[$key];
     }
 
     /**
@@ -84,7 +85,7 @@ class Repository
 
     /**
      * Set a given configuration value.
-     *
+     * set edilen değeri items değişkenine geç. Yukarıda ise itemde veri varsa get olarak item dönsün
      */
     public function set($key, $value = null)
     {
@@ -131,7 +132,7 @@ class Repository
     }
 
     /**
-     *
+     * sayfa_adı.config_key
      */
     public function extractConfig($key)
     {

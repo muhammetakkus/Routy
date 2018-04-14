@@ -6,8 +6,17 @@
 class ConfigFile
 {
 
+  /**/
   const CONFIG_FILE_PATH = 'configs';
 
+  // asıl config arrayını return eder
+  public static function getConfigArray($page)
+  {
+    $array = include(self::getConfigFilePath($page));
+    return $array;
+  }
+
+  /**/
   public static function getConfigFilePath($page)
   {
     $file_path = __DIR__ . '/' . self::CONFIG_FILE_PATH . '/'. $page . '.php';
@@ -16,13 +25,6 @@ class ConfigFile
       return $file_path;
     }
 
-    return 'sayfa bulunamadı-> ' . $file_path;
-  }
-
-  // asıl config arrayını return eder
-  public static function getConfigArray($page)
-  {
-    $array = include(self::getConfigFilePath($page));
-    return $array;
+    return '<b>' . $file_path . '<b/> page dosen\'t found';
   }
 }
