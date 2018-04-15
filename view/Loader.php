@@ -1,5 +1,7 @@
 <?php namespace View;
 
+use Config\Config;
+
 class Loader
 {
     /**
@@ -11,18 +13,17 @@ class Loader
         ob_start();
 
         extract($data, EXTR_SKIP);
-        
-        /* view'a gönderilen dosyayı aç */
-        $filePath = trim(\Config\Config::get('view.view'), '/') . '/' . $file . '.php';
+
+        /* view'a gönderilen dosyayı çağır */
+        $filePath = trim(Config::get('view.view'), '/') . '/' . $file . '.php';
 
         if(file_exists($filePath))
             require_once $filePath;
         else
-            echo $filePath . " dosyası bulunamadı!";
+            echo '</b>' . $filePath . '</b> file not found!';
 
-        //Geçerli sayfanın içeriğini döndürüp o içeriği siler
-        //yani bir nevi içeriği değişkene almış oluyoruz
-        //aslında şu ikisinin görevini yapıyor ob_get_contents() ve ob_end_clean()
+        // ob_get_clean() Geçerli sayfanın içeriğini döndürüp o içeriği siler
+        // ob_get_clean() = ob_get_contents() ve ob_end_clean() ?
         $content = ob_get_clean();
         if (ob_get_level() > 0) ob_flush();
         preg_match_all('/@section\((.*?)\)(.*?)@stop/ms', $content, $match);
@@ -54,10 +55,10 @@ class Loader
             $content = preg_replace("/@yield\($k\)/ms", $v, $content);
         }
 
-        //@section ve @stop tanımları içerikten kaldırılıyor
+        // @section ve @stop tanımları içerikten kaldırılıyor
         $content = preg_replace('/[\r\n]*@section.*?@stop[\r\n]*/ms', '', $content);
 
-        //@yield tanımları içerikten kaldırılıp ekrana basılıyor
+        // @yield tanımları içerikten kaldırılıp ekrana basılıyor
         echo preg_replace('/[\r\n]*@yield.*?\)[\r\n]*/ms', '', $content);
     }
 }
