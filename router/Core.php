@@ -8,7 +8,6 @@ class Core
      * @param $full_route
      * @param $route_data
      * @param $request_method
-     * @throws \Exception
      */
     public function handle($full_route, $route_data, $request_method)
     {
@@ -87,7 +86,6 @@ class Core
      * @param $route
      * @param $params
      * @param $request_method
-     * @throws \Exception
      */
     public function run($route_data, $route, $params, $request_method)
     {
@@ -124,7 +122,6 @@ class Core
 
     /**
      * @param $controller_name
-     * @throws \Exception
      *
      * refactor!
      */
@@ -134,7 +131,7 @@ class Core
 
         if (!file_exists($controller_path))
         {
-            throw new \Exception('<b>{$controller_path}</b> file not created!');
+            die($controller_path.' file not created!');
         }
 
         require_once $controller_path;
@@ -155,10 +152,10 @@ class Core
                 return true;
             }
 
-            throw new \Exception('there isn\'t <b>{$method}</b> method in <b>{$controller}</b> class!');
+            die('there isn\'t '.$method_name.' method in '.$controller_name.' class!');
         }
 
-        throw new \Exception('class name <b>{$controller}</b> is not defined!');
+        die('class name '.$controller_name.' is not defined!');
     }
 
     /**
