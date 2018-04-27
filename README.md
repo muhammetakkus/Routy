@@ -8,6 +8,16 @@ composer require cooky/url-router
 # For Nginx - default_nginx.conf
 ```
 root your_project_dir
+
+location ~ \.css {
+    add_header  Content-Type    text/css;
+}
+location ~ \.js {
+    add_header  Content-Type    application/x-javascript;
+}
+location ~ \.ico {
+    add_header  Content-Type    application/x-icon;
+}
 location / {
     rewrite ^(.*)$ /index.php/$1 last;
 }
@@ -34,12 +44,12 @@ Route::get('/', function (){
     echo '<h2>home page</h2>';
 });
 
-Route::get('/', 'Home@Index');
+/* controller */
+Route::get('/home', 'Home@Index');
 
-/* get with parameter */
+/* with parameter */
 Route::get('user/profile/{id}', 'User@Profile');
 
-/* post with parameter */
 Route::post('test/post/{id}', function ($id){
     echo $id;
 });
@@ -55,13 +65,13 @@ Route::complete();
     <meta charset="UTF-8">
 
     <link rel="stylesheet" href="css/default.css">
+    
     <!-- Custom Css -->
     @yield(css)
 
     <title>routy basic templating</title>
 </head>
 <body>
-
     <!-- NAV -->
     <nav>NAV</nav>
 
