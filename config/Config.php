@@ -7,3 +7,7 @@ class Config
         return (new Repository())->get($key);
     }
 }
+
+
+// use Config\Config;
+// var_dump(Config::get('router.controller'));

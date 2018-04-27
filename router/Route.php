@@ -15,11 +15,14 @@ class Route
      */
     public static function __callStatic($request_method, $args)
     {
+      //print_r($request_method);
       list($route, $call) = $args;
 
       $clean_route = Helper::clearRoute($route);
 
       self::$_route[$clean_route] = $call;
+
+
 
       $core = new Core();
       $core->handle($clean_route, self::$_route, strtoupper($request_method));

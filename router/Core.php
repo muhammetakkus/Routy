@@ -17,7 +17,7 @@ class Core
         list($route_paramless, $params) = $route_with_params;
 
         /**
-         *  PARAMETRELİ
+         *  Parameterized
          *  [$param != false] ise yani parametreli ise segment kontolü yap
          */
         if ($params)
@@ -36,33 +36,11 @@ class Core
             }
         }
 
-        /* PARAMETRESİZ */
+        /* Paramless */
         if (!$params && $route_paramless === Helper::uri())
         {
             $this->run($route_data, $route_paramless, [], $request_method);
         }
-
-        /*
-            legacy
-
-            gelen router'dan parametre sıralarını param_keys dizisine depola
-            $param_orders = array();
-            foreach ($params as $item) {
-                $param_key = array_search($item, $pars_route);
-                array_push($param_orders, $param_key);
-            }
-
-            yukarıda router'dan alınan parametre sıraları sayesinde
-            uri'den parametreler param_values dizisine depolanıyor
-            $param_values = array();
-            foreach ($param_orders as $item)
-            {
-                array_push($param_values, $pars_uri[$item]);
-            }
-
-            parametreleri uri'den çıkart
-            $unparams_uri = implode(array_diff($pars_uri, $param_values), "/");
-        */
     }
 
     public function paramUriAndParamRouteIsEqual($real_params)
@@ -93,18 +71,14 @@ class Core
 
         if($check_request)
         {
-            // burası gelen route callback mi string/controller mı diye bakılıp ona göre alttaki kısım çalıştırılmalı
-            $this->runTheCallback($route_data, $route, $params);
+            if(gettype($route_data[$route]) === 'object') {
+                $this->runTheCallback($route_data, $route, $params);
+            }
 
-            //
             list($controller_name, $method_name) = explode('@', $route_data[$route]);
-
             $this->callTheController($controller_name);
-
             $this->runTheController($controller_name, $method_name, $params);
         }
-
-        die();
     }
 
     /**
@@ -112,12 +86,9 @@ class Core
      */
     public function check_http_request($request_method)
     {
-        if (Helper::method() === $request_method)
-        {
+        if (Helper::method() === $request_method) {
             return true;
         }
-
-        Helper::errorPage();
     }
 
     /**
@@ -125,38 +96,56 @@ class Core
      *
      * refactor!
      */
-    public function callTheController($controller_name)
-    {
-        $controller_path =  trim(Config::get('router.controller'), '/') . '/' . $controller_name . ".php";
+     public function callTheController($controller_name)
+     {
 
-        if (!file_exists($controller_path))
-        {
-            die($controller_path.' file not created!');
-        }
+        $controller_path = trim(Config::get('router.controller'), '/') . '/';
 
-        require_once $controller_path;
-    }
-
-    /**
-     * must be refactor..
-     */
-    public function runTheController($controller_name, $method_name, $params)
-    {
-        if (class_exists($controller_name))
-        {
-            $controller_object = new $controller_name();
-
-            if (method_exists($controller_name, $method_name))
-            {
-                call_user_func_array([$controller_object, $method_name], $params);
-                return true;
+        /* Admin\Dashboard@panel */
+        $sub_controller = explode('\\', $controller_name);
+        if(count($sub_controller) > 1) {
+            $sub_controller_path = '';
+            foreach($sub_controller as $item) {
+              $sub_controller_path .= $item . '/';
             }
+            $controller_full_path =  $controller_path . rtrim($sub_controller_path, '/') . '.php';
+       } else {
+            $controller_full_path =  $controller_path . $controller_name . '.php';
+       }
 
-            die('there isn\'t '.$method_name.' method in '.$controller_name.' class!');
-        }
+       if (!file_exists($controller_full_path))
+       {
+           die($controller_full_path.' file not created!');
+       }
 
-        die('class name '.$controller_name.' is not defined!');
-    }
+       require_once $controller_full_path;
+     }
+
+     /**
+      *
+      */
+     public function runTheController($controller_name, $method_name, $params)
+     {
+       $sub_controller_name = explode('\\', $controller_name);
+       if(count($sub_controller_name) > 1) {
+         $controller_name = trim(end($sub_controller_name));
+       }
+
+       if (class_exists($controller_name))
+       {
+           $controller_object = new $controller_name();
+
+           if (method_exists($controller_name, $method_name))
+           {
+               call_user_func_array([$controller_object, $method_name], $params);
+               die();
+           }
+
+           die('there isn\'t '.$method_name.' method in '.$controller_name.' class!');
+       }
+
+       die('class name '.$controller_name.' is not defined!');
+     }
 
     /**
      *

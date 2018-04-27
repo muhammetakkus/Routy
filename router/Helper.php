@@ -96,11 +96,13 @@ class Helper
     /**
      * url den URI al ve temizlenmiş hali ile return et
      */
-    public static function uri()
-    {
-        $uri = $_SERVER['REQUEST_URI'];
-        return self::clearURI($uri);
-    }
+     public static function uri()
+     {
+         $uri = $_SERVER['REQUEST_URI'];
+         // host/user?name=qwe
+         $uri = explode('?', $uri)[0];
+         return self::clearURI($uri);
+     }
 
     // gelen router trim yapılıp gönderilir parametrelerde sadece trim içindir
         // user/{id}/ -> user/{id}
